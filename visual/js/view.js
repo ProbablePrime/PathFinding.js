@@ -6,11 +6,11 @@ var View = {
     nodeSize: 30, // width and height of a single node, in pixel
     nodeStyle: {
         normal: {
-            fill: 'white',
+            fill: 'rgb(124,124,144)',
             'stroke-opacity': 0.2, // the border
         },
         blocked: {
-            fill: 'grey',
+            fill: 'black',
             'stroke-opacity': 0.2,
         },
         start: {
@@ -32,6 +32,18 @@ var View = {
         failed: {
             fill: '#ff8888',
             'stroke-opacity': 0.2,
+        },
+        cost: {
+            fill: '#88ff88',
+            'stroke-opacity': 0.9,
+        },
+        nocost: {
+            fill: '#ffff88',
+            'stroke-opacity': 0.9,
+        },
+        negcost: {
+            fill: '#ff8888',
+            'stroke-opacity': 0.9,
         },
     },
     nodeColorizeEffect: {
@@ -157,6 +169,9 @@ var View = {
             this.colorizeNode(this.rects[gridY][gridX], nodeStyle.closed.fill);
             this.setCoordDirty(gridX, gridY, true);
             break;
+        case 'cost':
+            this.strokeFillOpacitizeNode(this.rects[gridY][gridX], (value));
+            break;
         case 'parent':
             // XXX: Maybe draw a line from this node to its parent?
             // This would be expensive.
@@ -169,6 +184,11 @@ var View = {
     colorizeNode: function(node, color) {
         node.animate({
             fill: color
+        }, this.nodeColorizeEffect.duration);
+    },
+    strokeFillOpacitizeNode: function(node, color) {
+        node.animate({
+            fill : "rgb("+(124-color)+","+(124-color)+","+(144-color)+")"
         }, this.nodeColorizeEffect.duration);
     },
     zoomNode: function(node) {

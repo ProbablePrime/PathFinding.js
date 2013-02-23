@@ -83,8 +83,13 @@ var Controller = StateMachine.create({
             to:   'erasingWall'
         },
         {
+            name: 'changeCost',
+            from: ['ready', 'finished'],
+            to:   'changingCost'
+        },
+        {
             name: 'rest',
-            from: ['draggingStart', 'draggingEnd', 'drawingWall', 'erasingWall'],
+            from: ['draggingStart', 'draggingEnd', 'drawingWall', 'erasingWall', 'changingCost'],
             to  : 'ready'
         },
     ],
@@ -127,6 +132,10 @@ $.extend(Controller, {
     oneraseWall: function(event, from, to, gridX, gridY) {
         this.setWalkableAt(gridX, gridY, true);
         // => erasingWall
+    },
+    onchangeCost: function(event, from, to, gridX, gridY, sign) {
+        this.changeCostAt(gridX, gridY, sign);
+        // => changingCost
     },
     onsearch: function(event, from, to) {
         var grid,
@@ -326,6 +335,8 @@ $.extend(Controller, {
     },
     bindEvents: function() {
         $('#draw_area').mousedown($.proxy(this.mousedown, this));
+        $('#draw_area').mousewheel($.proxy(this.mousewheel, this));
+
         $(window)
             .mousemove($.proxy(this.mousemove, this))
             .mouseup($.proxy(this.mouseup, this));
@@ -390,6 +401,19 @@ $.extend(Controller, {
         if (this.can('eraseWall') && !grid.isWalkableAt(gridX, gridY)) {
             this.eraseWall(gridX, gridY);
         }
+    },
+    mousewheel : function(event, delta, deltaX, deltaY) {
+        var coord = View.toGridCoordinate(event.pageX, event.pageY),
+        gridX = coord[0],
+        gridY = coord[1],
+        grid  = this.grid,
+        sign = deltaY ? (deltaY < 0 ? -1 : 1) : 0;
+
+        if (this.can('changeCost') && grid.isWalkableAt(gridX, gridY)) {
+            this.changeCost(gridX, gridY, sign);
+        }
+        this.mouseup(event)
+
     },
     mousemove: function(event) {
         var coord = View.toGridCoordinate(event.pageX, event.pageY),
@@ -482,6 +506,10 @@ $.extend(Controller, {
     setWalkableAt: function(gridX, gridY, walkable) {
         this.grid.setWalkableAt(gridX, gridY, walkable);
         View.setAttributeAt(gridX, gridY, 'walkable', walkable);
+    },
+    changeCostAt: function(gridX, gridY, sign) {
+        this.grid.changeCostAt(gridX, gridY, sign);
+        View.setAttributeAt(gridX, gridY, 'cost', this.grid.getNodeAt(gridX, gridY).cost);
     },
     isStartPos: function(gridX, gridY) {
         return gridX === this.startX && gridY === this.startY;

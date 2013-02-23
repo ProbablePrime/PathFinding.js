@@ -8,7 +8,7 @@ var browserify = require('browserify');
 function build(dest, options) {
   options || (options = {});
   options.uglify || (options.uglify = false);
-
+  
   var browserified = browserify.bundle(__dirname + '/../src/PathFinding.js');
   var namespaced   = 'var PF = (function() {' + browserified + 'return require("/PathFinding");})();';
   var bannered     = fs.readFileSync(__dirname + '/banner').toString() + namespaced;
