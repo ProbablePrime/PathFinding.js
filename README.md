@@ -13,6 +13,9 @@ It comes along with an [online demo](http://qiao.github.com/PathFinding.js/visua
 
 Note that this project only provides path-finding algorithms for 2D space. If you need to work in a 3D environment, then you may use [@schteppe](https://github.com/schteppe)'s [fork](https://github.com/schteppe/PathFinding3D.js).
 
+In this branch I have merged in [@johnste](https://github.com/johnste)'s [fork](https://github.com/johnste/PathFinding.js)
+which has a node cost for A* into the newer codebase from the main repo.
+
 Server
 ------
 
